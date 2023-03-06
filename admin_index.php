@@ -66,6 +66,14 @@ else
 		<li><a class="dropdown-item" href="../client/viewClient.php">Таблиця клієнтів</a></li>
 	  </ul>
 	</div>
+	<div class="dropdown">
+	  <a class=" nav-link dropdown-toggle white-text"  id="dropdownMenu1" data-bs-toggle="dropdown" aria-expanded="false">
+		Користувачі
+    </a>
+	  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+		<li><a class="dropdown-item" href="/users/list_users.php">Таблиця користувачів</a></li>
+	  </ul>
+	</div>
     </ul>
   </div>
 </nav>

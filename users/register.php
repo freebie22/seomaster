@@ -1,15 +1,14 @@
 <?php
 	session_start();
-	include "include/db_connect.php"; //Підключення до бази даних
+	include "../include/db_connect.php"; //Підключення до бази даних
 
 
     if (isset($_POST['submit_input']))
 	{
-		$login = $_POST["input_login"];
-        $pass = $_POST["input_password"];
-        $hash = md5($pass);
+		$login=$_POST["input_login"];
+		$pass=$_POST["input_password"];
 	
-		$result = mysqli_query($linc, "SELECT * FROM Users WHERE Login='$login' AND Password='$hash'");
+		$result = mysqli_query($linc, "SELECT * FROM Users WHERE Login='$login' AND Password='$pass'");
 	     if (mysqli_num_rows($result)>0)
 	     {$row=mysqli_fetch_array($result);
 			if ($row["Access"]==1) 
@@ -44,7 +43,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
 		<style media="screen">
       *,
-*:before,
+      *:before,
 *:after{
     padding: 0;
     margin: 0;
@@ -85,7 +84,7 @@ body{
     bottom: -80px;
 }
 form{
-    height: 450px;
+    height: 600px;
     width: 400px;
     background-color: rgba(255,255,255,0.13);
     position: absolute;
@@ -169,13 +168,70 @@ a{
 	</head>
     <body>
         <form class="signup-page" method="POST">
-        <h3>Вхід в аккаунт<h3>
-			<label for="sel1">Введіть логін</label>
-			<input type="text" id="sel1"  name="input_login" style="background:white; color:#0c0e0c; border:none;">	
+            <h3>Реєстрація<h3>
+			<label for="sel1">Введіть логін / електронну пошту</label>
+			<input type="text" id="sel1"  name="reg_login" style="background:white; color:#0c0e0c; border:none;">
+								
 			<label for="sel2">Введіть пароль</label>
-			<input type="password" id="sel2"  name="input_password" style="background:white; color:#0c0e0c; border:none;">				
-			<input type="submit" id="submit-form" name="submit_input" value="Вхід" style="color:#0c0e0c; border: 2px solid #c1aaaa; margin-top:25px;">
-            <a href="users/register.php">Не маєте облікового запису? Зареєструйтесь!</a>
+			<input type="password" id="sel2"  name="reg_password1" style="background:white; color:#0c0e0c; border:none;">
+
+            <label for="sel2">Підтвердіть пароль</label>
+			<input type="password" id="sel3"  name="reg_password2" style="background:white; color:#0c0e0c; border:none;">
+								
+			<input type="submit" id="submit-form" name="submit_reg" value="Зареєструватись" style="color:#0c0e0c; border: 2px solid #c1aaaa; margin-top:25px;">
+            <a href="../index.php">Маєте обліковий запис? Ввійдіть!</a>
 		</form>
     </body>
-</html>                	
+</html>     
+<?php
+	$error="";
+	if (isset($_POST['submit_reg']))
+    {
+		if ($_POST["reg_login"]=="" || $_POST["reg_password1"]=="" || $_POST["reg_password2"]=="")
+			{echo '
+				<script>
+				alert("Не введено логін або пароль.");
+				</script>';
+				$error="1";
+			}
+		
+		if ($_POST["reg_password1"]!=$_POST["reg_password2"])
+		    {echo '
+			<script>
+			alert("Не співпадають введені значення паролю.");
+			</script>';
+			$error="2";
+		    }
+		
+		$result=mysqli_query($linc, "SELECT * FROM Users");
+           $row = mysqli_fetch_array($result);
+			do{
+			  if ($_POST["reg_login"]==$row['Login'])
+			  {echo '
+				<script>
+					alert("Такий логін вже існує.");
+				</script>';
+				$error="3";				
+			  }
+			  
+		      }	
+			while ($row = mysqli_fetch_array($result));  	
+		
+		if ($error=="")
+		{
+            $User_ID = uniqid('user_', true);
+        $password1 = md5($_POST["reg_password1"]);
+         $password2 = md5($_POST["reg_password2"]);
+		  $access="1";;
+			mysqli_query($linc, "INSERT INTO Users SET
+                    User_Id = '".$User_ID."',
+					Login='".$_POST["reg_login"]."',
+					Password='".$password1."',
+                    Confirm_password='".$password1."',
+					Access='".$access."'
+					");
+                    header("Location: ../index.php");
+		};
+	};		
+
+?>           	

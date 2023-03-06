@@ -220,7 +220,6 @@ else
 					<th>
 						Переглянути авто
 					</th>
-					<th>
 				</tr>
 			</thead>
 			<tbody>
